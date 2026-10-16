@@ -41,7 +41,7 @@ struct DiagnosticsView: View {
                             Text("GPG not found")
                             Spacer()
                         }
-                        Text("Install GPG via Homebrew: brew install gnupg")
+                        Text("Install GnuPG or check MAILGPG_GPG_PATH in the MailGPG host service environment.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -99,7 +99,7 @@ struct DiagnosticsView: View {
                         if s.pinentryAvailablePath != nil {
                             fixButton(availablePath: s.pinentryAvailablePath)
                         } else {
-                            Text("Install pinentry-mac: brew install pinentry-mac")
+                            Text("Install pinentry-mac or check MAILGPG_PINENTRY_PATH in the host service environment.")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                         }
@@ -110,7 +110,7 @@ struct DiagnosticsView: View {
                                 .foregroundStyle(.red)
                             Text("pinentry-mac not installed")
                         }
-                        Text("Install it via Homebrew: brew install pinentry-mac")
+                        Text("Install pinentry-mac or check MAILGPG_PINENTRY_PATH in the host service environment.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

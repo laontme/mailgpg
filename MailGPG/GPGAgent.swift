@@ -18,10 +18,15 @@ struct GPGAgent {
     // MARK: - Tool path helper
 
     /// Returns the path to a GPG-suite companion binary (e.g. `gpgconf`)
-    /// by replacing the `gpg` filename in the located GPG binary's directory.
-    static func toolPath(_ name: String) throws -> String {
-        let gpg = try GPGLocator.locate()
+    /// from the same installation as the selected GPG binary. Resolve profile
+    /// symlinks first so a mixed profile cannot select another GPG's gpgconf.
+    static func toolPath(
+        _ name: String,
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) throws -> String {
+        let gpg = try GPGLocator.locate(environment: environment)
         return URL(fileURLWithPath: gpg)
+            .resolvingSymlinksInPath()
             .deletingLastPathComponent()
             .appendingPathComponent(name)
             .path
@@ -67,11 +72,14 @@ struct GPGAgent {
         "/usr/local/bin/pinentry-mac",
         "/usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac",
         "/Applications/GPG Keychain.app/Contents/Resources/pinentry-mac",
-    ]
+    ] + ExecutableLocator.nixBinDirectories.map { $0 + "/pinentry-mac" }
 
     /// The first `pinentry-mac` binary found on this machine, or `nil`.
     static var availableMacPinentry: String? {
-        macPinentryPaths.first { FileManager.default.isExecutableFile(atPath: $0) }
+        try? ExecutableLocator.locate(
+            overrideKey: "MAILGPG_PINENTRY_PATH",
+            names: ["pinentry-mac"],
+            fallbackPaths: macPinentryPaths)
     }
 
     /// The current pinentry configuration state.

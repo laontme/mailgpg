@@ -199,7 +199,7 @@ final class GPGServiceImpl: NSObject, GPGXPCProtocol {
     func fixPinentry(reply: @escaping (Error?) -> Void) {
         guard let path = GPGAgent.availableMacPinentry else {
             reply(GPGXPCError.make(.gpgNotFound,
-                message: "No pinentry-mac binary found. Install it via Homebrew: brew install pinentry-mac"))
+                message: "No usable pinentry-mac binary found. Install it or check MAILGPG_PINENTRY_PATH in the host service environment."))
             return
         }
         do {
